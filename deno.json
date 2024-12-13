@@ -1,0 +1,32 @@
+{
+  "name": "@uzmoi/ut",
+  "version": "0.1.0",
+  "exports": {
+    "./*": "./src/*/index.ts"
+  },
+  "publish": {
+    "include": [
+      "src/**/*.ts",
+      "LICENSE",
+      "README.md",
+      "deno.json",
+      "package.json"
+    ],
+    "exclude": [
+      "**/*.test.ts"
+    ]
+  },
+  "tasks": {
+    "dev": "deno test --watch mod.ts",
+    "build": "tsup"
+  },
+  "license": "MIT",
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1"
+  },
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["ESNext"]
+  }
+}
