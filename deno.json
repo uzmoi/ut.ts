@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "exports": {
     "./iter": "./src/iter/index.ts",
+    "./re": "./src/re/index.ts",
     "./types": "./src/types/index.ts"
   },
   "publish": {
