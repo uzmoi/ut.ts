@@ -5,7 +5,7 @@
   "description": "",
   "type": "module",
   "exports": {
-    "./*": "./dist/*.js"
+    "./*": "./dist/*/index.js"
   },
   "sideEffects": false,
   "files": [
