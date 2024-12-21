@@ -7,8 +7,8 @@ on:
 jobs:
   version:
     outputs:
-      npm-version:
-      jsr-version:
+      npm-version: ${{ steps.version.outputs.npm-version }}
+      jsr-version: ${{ steps.version.outputs.jsr-version }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,9 +19,10 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Read version
+        id: version
         run: |
-          NPM_VERSION=$(jq -e '"/v" + .version' package.json)
-          JSR_VERSION=$(jq -e '"/v" + .version' deno.json)
+          NPM_VERSION=$(jq -er '"/v" + .version' package.json)
+          JSR_VERSION=$(jq -er '"/v" + .version' deno.json)
           echo "npm-version=${NPM_VERSION}" >> $GITHUB_OUTPUT
           echo "jsr-version=${JSR_VERSION}" >> $GITHUB_OUTPUT
 
@@ -40,6 +41,7 @@ jobs:
         with:
           registry-url: https://registry.npmjs.org
 
+      - run: deno install
       - run: deno run build
 
       - run: npm publish --provenance
