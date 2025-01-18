@@ -1,6 +1,9 @@
 // 補完や`keyof Brand<T>`でキーが出てこないようにunionにする。
 // エラーメッセージ内での型名が Brand になるように`declare namespace`を使用。
 
+// `declare const brand: unique symbol;`しても良さそうだが、万が一
+// 複数バージョンのut.tsがインストールされると型の互換性がなくなる。
+
 /** @internal */
 declare namespace A {
   /** @internal */
