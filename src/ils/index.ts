@@ -4,3 +4,4 @@
  */
 
 export * from "./delay.ts";
+export * from "./unique.ts";
