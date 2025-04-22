@@ -1,0 +1,7 @@
+/**
+ * @module
+ *
+ * Functional Programming.
+ */
+
+export {};
