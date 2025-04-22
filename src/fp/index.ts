@@ -4,4 +4,4 @@
  * Functional Programming.
  */
 
-export {};
+export * from "./result.ts";
