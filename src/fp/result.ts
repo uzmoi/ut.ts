@@ -11,6 +11,11 @@ interface ResultErr<out A, out E> extends ResultBase<A, E> {
 export type Result<A, E> = ResultOk<A, E> | ResultErr<A, E>;
 
 class ResultBase<out A, out E> {
+  /** @ignore */
+  declare static [Symbol.hasInstance]: (
+    x: unknown,
+  ) => x is Result<unknown, unknown>;
+
   static try<A>(runner: () => A): Result<A, unknown> {
     try {
       return Ok(runner());
@@ -19,7 +24,7 @@ class ResultBase<out A, out E> {
     }
   }
 
-  private constructor(
+  constructor(
     readonly ok: boolean,
     readonly value: A | E,
   ) {}
@@ -175,20 +180,34 @@ class ResultBase<out A, out E> {
 }
 
 /**
+ * @internal
+ */
+export interface ResultClass {
+  /**
+   * @deprecated
+   * The entity of this value is a class, and this method does not actually exist.
+   * This method is declared so that `instanceof` can be used in typescript.
+   *
+   * @ignore
+   */
+  [Symbol.hasInstance](x: unknown): x is Result<unknown, unknown>;
+
+  try<A>(f: () => A): Result<A, unknown>;
+}
+
+/**
  * @see {@link ResultBase}
  */
-export const Result = ResultBase;
+export const Result: ResultClass = ResultBase;
 
 /**
  * Create `Ok` from a value.
  */
 export const Ok = <A>(value: A): ResultOk<A, never> =>
-  // @ts-expect-error: ignore
-  new ResultBase(true, value) as Result<A, never>;
+  new ResultBase(true, value) as ResultOk<A, never>;
 
 /**
  * Create `Err` from an error.
  */
 export const Err = <E>(error: E): ResultErr<never, E> =>
-  // @ts-expect-error: ignore
-  new ResultBase(false, error) as Result<never, E>;
+  new ResultBase(false, error) as ResultErr<never, E>;
