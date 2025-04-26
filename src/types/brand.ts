@@ -7,7 +7,7 @@
 /** @internal */
 declare namespace A {
   /** @internal */
-  export interface Brand<Name extends string | symbol> {
+  export interface Brand<in Name extends string | symbol> {
     "__?-brand": { [_ in Name]: never };
   }
 }
@@ -15,7 +15,7 @@ declare namespace A {
 /** @internal */
 declare namespace B {
   /** @internal */
-  export interface Brand<Name extends string | symbol> {
+  export interface Brand<in Name extends string | symbol> {
     "__?+brand": { [_ in Name]: never };
   }
 }
