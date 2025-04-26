@@ -10,7 +10,16 @@ interface ResultErr<out A, out E> extends ResultBase<A, E> {
 
 export type Result<A, E> = ResultOk<A, E> | ResultErr<A, E>;
 
-class ResultBase<out A, out E> {
+/**
+ * @deprecated
+ * Use {@link Result} type instead.
+ *
+ * This type is exported for jsr.io to generate documentation of this type
+ * (see https://github.com/jsr-io/jsr/issues/694).
+ *
+ * @internal
+ */
+export class ResultBase<out A, out E> {
   /** @ignore */
   declare static [Symbol.hasInstance]: (
     x: unknown,
