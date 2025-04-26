@@ -1,6 +1,7 @@
 /**
- * @module
  * ut/ils
+ *
+ * @module
  */
 
 export * from "./delay.ts";

@@ -1,7 +1,7 @@
 /**
- * @module
- *
  * Functional Programming.
+ *
+ * @module
  */
 
 export {
