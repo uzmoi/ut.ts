@@ -15,3 +15,8 @@ export type UnionToIntersection<T> = [T] extends [never] ? never
 
 export type NormalizeObject<T> = T extends object ? { [P in keyof T]: T[P] }
   : T;
+
+export type PartiallyPartial<T, K extends keyof T> = NormalizeObject<
+  & Omit<T, K>
+  & Partial<Pick<T, K>>
+>;
