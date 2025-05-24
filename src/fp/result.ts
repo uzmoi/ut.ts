@@ -1,14 +1,14 @@
-interface ResultOk<out A, out E> extends ResultBase<A, E> {
+interface ResultOk<out A> extends ResultBase {
   readonly ok: true;
   readonly value: A;
 }
 
-interface ResultErr<out A, out E> extends ResultBase<A, E> {
+interface ResultErr<out E> extends ResultBase {
   readonly ok: false;
   readonly value: E;
 }
 
-export type Result<A, E> = ResultOk<A, E> | ResultErr<A, E>;
+export type Result<A, E> = ResultOk<A> | ResultErr<E>;
 
 /**
  * @deprecated
@@ -19,7 +19,7 @@ export type Result<A, E> = ResultOk<A, E> | ResultErr<A, E>;
  *
  * @internal
  */
-export class ResultBase<out A, out E> {
+export class ResultBase {
   /** @ignore */
   declare static [Symbol.hasInstance]: (
     x: unknown,
@@ -35,7 +35,7 @@ export class ResultBase<out A, out E> {
 
   constructor(
     readonly ok: boolean,
-    readonly value: A | E,
+    readonly value: unknown,
   ) {}
 
   toString(): string {
@@ -47,12 +47,12 @@ export class ResultBase<out A, out E> {
    * @deprecated Use `.value` instead of calling `.unwrap()` on `Ok`.
    * @ignore
    */
-  unwrap(this: ResultOk<A, E>): A;
+  unwrap<A>(this: Result<A, never>): A;
   /**
    * @deprecated Calling `.unwrap()` on `Err` always throws a TypeError.
    * @ignore
    */
-  unwrap(this: ResultErr<A, E>): never;
+  unwrap(this: Result<never, unknown>): never;
   /**
    * Returns the `Ok` value or throw an error if `Err`.
    *
@@ -65,8 +65,8 @@ export class ResultBase<out A, out E> {
    * assertThrows(() => Err("error").unwrap());
    * ```
    */
-  unwrap(): A;
-  unwrap(this: Result<A, E>): A {
+  unwrap<A>(this: Result<A, unknown>): A;
+  unwrap<A>(this: Result<A, unknown>): A {
     if (this.ok) return this.value;
     throw new TypeError("Called unwrap on `Err`", { cause: this.value });
   }
@@ -75,12 +75,12 @@ export class ResultBase<out A, out E> {
    * @deprecated Use `.value` instead of calling `.unwrapOr()` on `Ok`.
    * @ignore
    */
-  unwrapOr(this: ResultOk<A, E>, value: unknown): A;
+  unwrapOr<A>(this: Result<A, never>, value: unknown): A;
   /**
    * @deprecated Calling `.unwrapOr()` on `Err` always returns the argument.
    * @ignore
    */
-  unwrapOr<B>(this: ResultErr<A, E>, value: B): B;
+  unwrapOr<B>(this: Result<never, unknown>, value: B): B;
   /**
    * Returns the `Ok` value or provided value if `Err`.
    *
@@ -92,7 +92,7 @@ export class ResultBase<out A, out E> {
    * assertEquals(Err("error").unwrapOr(null), null);
    * ```
    */
-  unwrapOr(value: A): A;
+  unwrapOr<A>(this: Result<A, unknown>, value: NoInfer<A>): A;
   /**
    * Returns the `Ok` value or provided value if `Err`.
    *
@@ -104,8 +104,8 @@ export class ResultBase<out A, out E> {
    * assertEquals(Err("error").unwrapOr(null), null);
    * ```
    */
-  unwrapOr<B>(value: B): A | B;
-  unwrapOr<B>(this: Result<A, E>, value: B): A | B {
+  unwrapOr<A, B>(this: Result<A, unknown>, value: B): A | B;
+  unwrapOr<A, B>(this: Result<A, unknown>, value: B): A | B {
     return this.ok ? this.value : value;
   }
 
@@ -121,9 +121,10 @@ export class ResultBase<out A, out E> {
    * assertEquals(Err("error").map(x => x * 2), Err("error"));
    * ```
    */
-  map<B>(fn: (value: A) => B): Result<B, E>;
-  map<B>(this: Result<A, E>, fn: (value: A) => B): Result<B, E> {
-    return this.ok ? Ok(fn(this.value)) : (this as Result<never, E>);
+  map<E, B>(this: Result<never, E>, fn: (value: never) => B): Result<B, E>;
+  map<A, E, B>(this: Result<A, E>, fn: (value: A) => B): Result<B, E>;
+  map<E, B>(this: Result<never, E>, fn: (value: never) => B): Result<B, E> {
+    return this.ok ? Ok(fn(this.value)) : this;
   }
 
   /**
@@ -139,9 +140,14 @@ export class ResultBase<out A, out E> {
    * assertEquals(Err("error").mapOr(0, x => x * 2), 0);
    * ```
    */
-  mapOr<B>(value: B, fn: (value: A) => B): B;
-  mapOr<B, C>(value: B, fn: (value: A) => C): B | C;
-  mapOr<B, C>(this: Result<A, E>, value: B, fn: (value: A) => C): B | C {
+  mapOr<B>(this: Result<never, unknown>, value: B, fn: (value: never) => B): B;
+  mapOr<A, B>(this: Result<A, unknown>, value: B, fn: (value: A) => B): B;
+  mapOr<A, B, C>(
+    this: Result<A, unknown>,
+    value: B,
+    fn: (value: A) => C,
+  ): B | C;
+  mapOr<B>(this: Result<never, unknown>, value: B, fn: (value: never) => B): B {
     return this.ok ? fn(this.value) : value;
   }
 
@@ -162,12 +168,11 @@ export class ResultBase<out A, out E> {
    * assertEquals(Err("error").flatMap(reciprocal), Err("error"));
    * ```
    */
-  flatMap<B, F = E>(fn: (value: A) => Result<B, F>): Result<B, E | F>;
-  flatMap<B, F>(
+  flatMap<A, E, B, F = E>(
     this: Result<A, E>,
     fn: (value: A) => Result<B, F>,
   ): Result<B, E | F> {
-    return this.ok ? fn(this.value) : (this as Result<never, E>);
+    return this.ok ? fn(this.value) : this;
   }
 
   /**
@@ -182,9 +187,8 @@ export class ResultBase<out A, out E> {
    * assertEquals(Err("error").mapErr(x => x + "!"), Err("error!"));
    * ```
    */
-  mapErr<F>(fn: (value: E) => F): Result<A, F>;
-  mapErr<F>(this: Result<A, E>, fn: (value: E) => F): Result<A, F> {
-    return this.ok ? (this as Result<A, never>) : Err(fn(this.value));
+  mapErr<A, E, F>(this: Result<A, E>, fn: (value: E) => F): Result<A, F> {
+    return this.ok ? this : Err(fn(this.value));
   }
 }
 
@@ -212,11 +216,11 @@ export const Result: ResultClass = ResultBase;
 /**
  * Create `Ok` from a value.
  */
-export const Ok = <A>(value: A): ResultOk<A, never> =>
-  new ResultBase(true, value) as ResultOk<A, never>;
+export const Ok = <A>(value: A): ResultOk<A> =>
+  new ResultBase(true, value) as ResultOk<A>;
 
 /**
  * Create `Err` from an error.
  */
-export const Err = <E>(error: E): ResultErr<never, E> =>
-  new ResultBase(false, error) as ResultErr<never, E>;
+export const Err = <E>(error: E): ResultErr<E> =>
+  new ResultBase(false, error) as ResultErr<E>;
