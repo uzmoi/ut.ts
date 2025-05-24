@@ -104,7 +104,7 @@ export class ResultBase {
    * assertEquals(Err("error").unwrapOr(null), null);
    * ```
    */
-  unwrapOr<A, B>(this: Result<A, unknown>, value: B): A | B;
+  unwrapOr<A, const B>(this: Result<A, unknown>, value: B): A | B;
   unwrapOr<A, B>(this: Result<A, unknown>, value: B): A | B {
     return this.ok ? this.value : value;
   }
@@ -122,7 +122,7 @@ export class ResultBase {
    * ```
    */
   map<E, B>(this: Result<never, E>, fn: (value: never) => B): Result<B, E>;
-  map<A, E, B>(this: Result<A, E>, fn: (value: A) => B): Result<B, E>;
+  map<A, E, const B>(this: Result<A, E>, fn: (value: A) => B): Result<B, E>;
   map<E, B>(this: Result<never, E>, fn: (value: never) => B): Result<B, E> {
     return this.ok ? Ok(fn(this.value)) : this;
   }
@@ -141,8 +141,8 @@ export class ResultBase {
    * ```
    */
   mapOr<B>(this: Result<never, unknown>, value: B, fn: (value: never) => B): B;
-  mapOr<A, B>(this: Result<A, unknown>, value: B, fn: (value: A) => B): B;
-  mapOr<A, B, C>(
+  mapOr<A, const B>(this: Result<A, unknown>, value: B, fn: (value: A) => B): B;
+  mapOr<A, const B, const C>(
     this: Result<A, unknown>,
     value: B,
     fn: (value: A) => C,
@@ -187,7 +187,7 @@ export class ResultBase {
    * assertEquals(Err("error").mapErr(x => x + "!"), Err("error!"));
    * ```
    */
-  mapErr<A, E, F>(this: Result<A, E>, fn: (value: E) => F): Result<A, F> {
+  mapErr<A, E, const F>(this: Result<A, E>, fn: (value: E) => F): Result<A, F> {
     return this.ok ? this : Err(fn(this.value));
   }
 }
@@ -205,7 +205,7 @@ export interface ResultClass {
    */
   [Symbol.hasInstance](x: unknown): x is Result<unknown, unknown>;
 
-  try<A>(f: () => A): Result<A, unknown>;
+  try<const A>(f: () => A): Result<A, unknown>;
 }
 
 /**
@@ -216,11 +216,11 @@ export const Result: ResultClass = ResultBase;
 /**
  * Create `Ok` from a value.
  */
-export const Ok = <A>(value: A): ResultOk<A> =>
+export const Ok = <const A>(value: A): ResultOk<A> =>
   new ResultBase(true, value) as ResultOk<A>;
 
 /**
  * Create `Err` from an error.
  */
-export const Err = <E>(error: E): ResultErr<E> =>
+export const Err = <const E>(error: E): ResultErr<E> =>
   new ResultBase(false, error) as ResultErr<E>;
