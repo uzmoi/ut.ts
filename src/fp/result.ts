@@ -190,6 +190,30 @@ export class ResultBase {
   mapErr<A, E, const F>(this: Result<A, E>, fn: (value: E) => F): Result<A, F> {
     return this.ok ? this : Err(fn(this.value));
   }
+
+  /**
+   * Returns the result of applying a function to the `Err` value, or `Ok` value.
+   *
+   * @example
+   * ```ts
+   * import { assertEquals } from "@std/assert";
+   *
+   * const f = (x: string) => {
+   *   const n = parseInt(x, 10);
+   *   return Number.isNaN(n) ? Err(x) : Ok(n);
+   * };
+   *
+   * assertEquals(Ok(71).orElse(f), Ok(71));
+   * assertEquals(Err("127").orElse(f), Ok(127));
+   * assertEquals(Err("foo").orElse(f), Err("foo"));
+   * ```
+   */
+  orElse<A, B, E, F = E>(
+    this: Result<A, E>,
+    fn: (error: E) => Result<B, F>,
+  ): Result<A | B, F> {
+    return this.ok ? this : fn(this.value);
+  }
 }
 
 /**
