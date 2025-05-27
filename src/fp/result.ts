@@ -39,8 +39,7 @@ export class ResultBase {
   ) {}
 
   toString(): string {
-    const value = String(this.value);
-    return this.ok ? `Ok(${value})` : `Err(${value})`;
+    return `${this.ok ? "Ok" : "Err"}(${String(this.value)})`;
   }
 
   /**
