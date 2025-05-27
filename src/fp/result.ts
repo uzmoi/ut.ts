@@ -120,9 +120,9 @@ export class ResultBase {
    * assertEquals(Err("error").map(x => x * 2), Err("error"));
    * ```
    */
-  map<E, B>(this: Result<never, E>, fn: (value: never) => B): Result<B, E>;
-  map<A, E, const B>(this: Result<A, E>, fn: (value: A) => B): Result<B, E>;
-  map<E, B>(this: Result<never, E>, fn: (value: never) => B): Result<B, E> {
+  map<B, E>(this: Result<never, E>, fn: (value: never) => B): Result<B, E>;
+  map<A, const B, E>(this: Result<A, E>, fn: (value: A) => B): Result<B, E>;
+  map<B, E>(this: Result<never, E>, fn: (value: never) => B): Result<B, E> {
     return this.ok ? Ok(fn(this.value)) : this;
   }
 
@@ -167,7 +167,7 @@ export class ResultBase {
    * assertEquals(Err("error").flatMap(reciprocal), Err("error"));
    * ```
    */
-  flatMap<A, E, B, F = E>(
+  flatMap<A, B, E, F = E>(
     this: Result<A, E>,
     fn: (value: A) => Result<B, F>,
   ): Result<B, E | F> {
