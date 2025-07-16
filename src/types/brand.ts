@@ -1,24 +1,4 @@
-// 補完や`keyof Brand<T>`でキーが出てこないようにunionにする。
-// エラーメッセージ内での型名が Brand になるように`declare namespace`を使用。
-
-// `declare const brand: unique symbol;`しても良さそうだが、万が一
-// 複数バージョンのut.tsがインストールされると型の互換性がなくなる。
-
-/** @internal */
-declare namespace A {
-  /** @internal */
-  export interface Brand<in Name extends string | symbol> {
-    "__?-brand": { [_ in Name]: never };
-  }
-}
-
-/** @internal */
-declare namespace B {
-  /** @internal */
-  export interface Brand<in Name extends string | symbol> {
-    "__?+brand": { [_ in Name]: never };
-  }
-}
+declare const brand: unique symbol;
 
 /**
  * Utility type for creating Branded Types.
@@ -32,6 +12,8 @@ declare namespace B {
  * const createId = (id: string) => id as Id;
  * ```
  */
-export type Brand<Name extends string | symbol> = A.Brand<Name> | B.Brand<Name>;
+export interface Brand<in Name extends string | symbol> {
+  [brand]: { [_ in Name]: never };
+}
 
 // 型追加するならファイル名phantomにしたほうがいいかも。
