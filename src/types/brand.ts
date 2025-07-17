@@ -13,7 +13,7 @@ declare const brand: unique symbol;
  * ```
  */
 export interface Brand<in Name extends string | symbol> {
-  [brand]: { [_ in Name]: never };
+  [brand]: { [_ in Name]: never } | undefined;
 }
 
 // 型追加するならファイル名phantomにしたほうがいいかも。
