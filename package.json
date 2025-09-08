@@ -25,9 +25,9 @@
   },
   "homepage": "https://github.com/uzmoi/ut.ts#readme",
   "devDependencies": {
-    "cspell": "^8.16.1",
-    "lefthook": "^1.9.2",
+    "cspell": "^9.2.1",
+    "lefthook": "^1.12.4",
     "tsdown": "^0.14.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.2"
   }
 }
