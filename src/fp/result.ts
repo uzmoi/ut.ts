@@ -247,3 +247,7 @@ export const Ok = <const A>(value: A): ResultOk<A> =>
  */
 export const Err = <const E>(error: E): ResultErr<E> =>
   new ResultBase(false, error) as ResultErr<E>;
+
+export const fromPromise = <A>(
+  promise: Promise<A>,
+): Promise<Result<A, unknown>> => promise.then(Ok, Err);

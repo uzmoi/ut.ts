@@ -6,6 +6,7 @@
 
 export {
   Err,
+  fromPromise,
   Ok,
   Result,
   type ResultBase,
