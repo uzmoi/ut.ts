@@ -22,7 +22,7 @@
   },
   "tasks": {
     "dev": "deno test --watch mod.ts",
-    "build": "tsup"
+    "build": "tsdown"
   },
   "license": "MIT",
   "imports": {

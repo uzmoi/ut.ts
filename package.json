@@ -27,7 +27,7 @@
   "devDependencies": {
     "cspell": "^8.16.1",
     "lefthook": "^1.9.2",
-    "tsup": "^8.3.5",
+    "tsdown": "^0.14.2",
     "typescript": "^5.7.2"
   }
 }
