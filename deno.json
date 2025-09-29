@@ -21,7 +21,6 @@
     ]
   },
   "tasks": {
-    "dev": "deno test --watch mod.ts",
     "build": "tsdown"
   },
   "license": "MIT",
