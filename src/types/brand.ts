@@ -12,6 +12,10 @@ declare const brand: unique symbol;
  * type Id = string & Brand<"Id">;
  * const createId = (id: string) => id as Id;
  * ```
+ * @example
+ * ```ts
+ * type Id = string & Brand<{ readonly Id: unique symbol }["Id"]>;
+ * ```
  */
 export interface Brand<in Name extends string | symbol> {
   [brand]: { [_ in Name]: never } | undefined;
