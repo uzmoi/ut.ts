@@ -15,4 +15,4 @@ glob = "*.ts"
 run = "deno lint {staged_files}"
 
 [pre-commit.commands.cSpell]
-run = "npx cspell lint --no-progress --no-must-find-files {staged_files}"
+run = "deno task cspell lint --no-progress --no-must-find-files {staged_files}"

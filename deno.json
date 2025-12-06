@@ -21,6 +21,7 @@
     ]
   },
   "tasks": {
+    "cspell": "cspell",
     "build": "tsdown"
   },
   "license": "MIT",
