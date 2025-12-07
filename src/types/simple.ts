@@ -5,8 +5,7 @@ export type JsonValue =
   | { [key: string]: JsonValue }
   | JsonValue[];
 
-// deno-lint-ignore no-explicit-any
-export type Callable = (...args: any) => unknown;
+export type Callable = (...args: never) => unknown;
 
 export type UnionToIntersection<T> = [T] extends [never] ? never
   : (T extends unknown ? (x: T) => void : never) extends ((x: infer U) => void)
