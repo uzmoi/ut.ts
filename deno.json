@@ -5,7 +5,6 @@
     "./fp": "./src/fp/index.ts",
     "./ils": "./src/ils/index.ts",
     "./iter": "./src/iter/index.ts",
-    "./re": "./src/re/index.ts",
     "./types": "./src/types/index.ts"
   },
   "publish": {
