@@ -2,6 +2,7 @@
   "name": "@uzmoi/ut",
   "version": "0.1.4",
   "exports": {
+    "./encoding": "./src/encoding/index.ts",
     "./fp": "./src/fp/index.ts",
     "./ils": "./src/ils/index.ts",
     "./iter": "./src/iter/index.ts",
