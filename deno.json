@@ -1,6 +1,6 @@
 {
   "name": "@uzmoi/ut",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "exports": {
     "./encoding": "./src/encoding/index.ts",
     "./fp": "./src/fp/index.ts",
