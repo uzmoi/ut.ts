@@ -3,6 +3,8 @@ import { uncurryThis } from "../safe/index.ts";
 const SameValueZero = (left: unknown, right: unknown) =>
   (left === left) ? left === right : right !== right;
 
+const map_prototype_has = /* #__PURE__ */ uncurryThis(Map.prototype.has);
+const map_prototype_get = /* #__PURE__ */ uncurryThis(Map.prototype.get);
 const map_prototype_clear = /* #__PURE__ */ uncurryThis(Map.prototype.clear);
 const map_prototype_delete = /* #__PURE__ */ uncurryThis(Map.prototype.delete);
 const map_prototype_set = /* #__PURE__ */ uncurryThis(Map.prototype.set);
@@ -34,14 +36,14 @@ export class BiMap<K, V> extends Map<K, V> {
   }
 
   override delete(key: K): boolean {
-    const value = this.get(key);
+    const value: V | undefined = map_prototype_get(this, key);
     return map_prototype_delete(this, key) &&
       map_prototype_delete(this.inverse, value);
   }
 
   override set(key: K, value: V): this {
-    if (this.has(key)) {
-      const keyValue = this.get(key)!;
+    if (map_prototype_has(this, key)) {
+      const keyValue: V = map_prototype_get(this, key);
 
       // 既に (key, value) のエントリがあれば早期リターン。
       if (SameValueZero(keyValue, value)) return this;
@@ -49,8 +51,8 @@ export class BiMap<K, V> extends Map<K, V> {
       map_prototype_delete(this.inverse, keyValue);
     }
 
-    if (this.inverse.has(value)) {
-      const valueKey = this.inverse.get(value)!;
+    if (map_prototype_has(this.inverse, value)) {
+      const valueKey: K = map_prototype_get(this.inverse, value);
       map_prototype_delete(this, valueKey);
     }
 
@@ -61,6 +63,9 @@ export class BiMap<K, V> extends Map<K, V> {
   }
 }
 
+const weakmap_prototype_get = /* #__PURE__ */ uncurryThis(
+  WeakMap.prototype.get,
+);
 const weakmap_prototype_delete = /* #__PURE__ */ uncurryThis(
   WeakMap.prototype.delete,
 );
@@ -93,7 +98,7 @@ export class WeakBiMap<
   }
 
   override delete(key: K): boolean {
-    const value = this.get(key);
+    const value: V | undefined = weakmap_prototype_get(this, key);
     return weakmap_prototype_delete(this, key) &&
       weakmap_prototype_delete(this.inverse, value!);
   }
@@ -103,7 +108,7 @@ export class WeakBiMap<
       throw new TypeError("Invalid value used as weak map key");
     }
 
-    const keyValue = this.get(key);
+    const keyValue: V | undefined = weakmap_prototype_get(this, key);
 
     // 既に (key, value) のエントリがあれば早期リターン。
     // key, value 共に NaN は入ってこない為 SameValueZero を使う必要はない。
@@ -113,7 +118,7 @@ export class WeakBiMap<
       weakmap_prototype_delete(this.inverse, keyValue);
     }
 
-    const valueKey = this.inverse.get(value);
+    const valueKey: K | undefined = weakmap_prototype_get(this.inverse, value);
     if (valueKey !== undefined) {
       weakmap_prototype_delete(this, valueKey);
     }
