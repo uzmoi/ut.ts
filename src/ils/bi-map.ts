@@ -74,7 +74,8 @@ const weakmap_prototype_set = /* #__PURE__ */ uncurryThis(
 );
 
 export const isWeakKey = (key: unknown): key is WeakKey =>
-  (typeof key == "object" && key != null) || typeof key == "symbol";
+  (typeof key == "object" && key != null) ||
+  (typeof key == "symbol" && Symbol.keyFor(key) == null);
 
 export class WeakBiMap<
   K extends WeakKey,
