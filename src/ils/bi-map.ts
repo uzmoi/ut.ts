@@ -1,7 +1,5 @@
 import { uncurryThis } from "../safe/index.ts";
-
-const SameValueZero = (left: unknown, right: unknown) =>
-  (left === left) ? left === right : right !== right;
+import { SameValueZero } from "./simple.ts";
 
 const bind = /* #__PURE__ */ uncurryThis(Function.prototype.bind);
 
