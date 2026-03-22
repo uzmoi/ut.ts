@@ -3,11 +3,17 @@ import { uncurryThis } from "../safe/index.ts";
 const SameValueZero = (left: unknown, right: unknown) =>
   (left === left) ? left === right : right !== right;
 
+const bind = /* #__PURE__ */ uncurryThis(Function.prototype.bind);
+
 const map_prototype_has = /* #__PURE__ */ uncurryThis(Map.prototype.has);
 const map_prototype_get = /* #__PURE__ */ uncurryThis(Map.prototype.get);
 const map_prototype_clear = /* #__PURE__ */ uncurryThis(Map.prototype.clear);
 const map_prototype_delete = /* #__PURE__ */ uncurryThis(Map.prototype.delete);
 const map_prototype_set = /* #__PURE__ */ uncurryThis(Map.prototype.set);
+
+let constructingBiMap: BiMap<unknown, unknown> | undefined;
+// new new.target() してから super() までの間のみ false になる。
+let isConstructedInverseBiMap = true;
 
 /**
  * Bi-directional map.
@@ -18,15 +24,25 @@ export class BiMap<K, V> extends Map<K, V> {
   constructor(iterable?: Iterable<readonly [K, V]> | null) {
     super();
 
-    if (iterable instanceof BiMap && !iterable.inverse) {
-      this.inverse = iterable;
-    } else {
-      this.inverse = new new.target(this as unknown as []);
+    if (constructingBiMap == null) {
+      constructingBiMap = this;
+      isConstructedInverseBiMap = false;
+      this.inverse = new new.target();
+      constructingBiMap = undefined;
+
       if (iterable != null) {
+        const set = bind(this.set, this);
         for (const { 0: key, 1: value } of iterable) {
-          this.set(key, value);
+          set(key, value);
         }
       }
+    } else {
+      if (isConstructedInverseBiMap) {
+        throw new Error("Cannot construct BiMap before calling super()");
+      }
+      isConstructedInverseBiMap = true;
+
+      this.inverse = constructingBiMap as BiMap<V, K>;
     }
   }
 
@@ -77,6 +93,10 @@ export const isWeakKey = (key: unknown): key is WeakKey =>
   (typeof key == "object" && key != null) ||
   (typeof key == "symbol" && Symbol.keyFor(key) == null);
 
+let constructingWeakBiMap: WeakBiMap<WeakKey, WeakKey> | undefined;
+// new new.target() してから super() までの間のみ false になる。
+let isConstructedInverseWeakBiMap = true;
+
 export class WeakBiMap<
   K extends WeakKey,
   V extends WeakKey,
@@ -86,15 +106,25 @@ export class WeakBiMap<
   constructor(iterable?: Iterable<readonly [K, V]> | null) {
     super();
 
-    if (iterable instanceof WeakBiMap && !iterable.inverse) {
-      this.inverse = iterable;
-    } else {
-      this.inverse = new new.target(this as unknown as []);
+    if (constructingWeakBiMap == null) {
+      constructingWeakBiMap = this;
+      isConstructedInverseWeakBiMap = false;
+      this.inverse = new new.target();
+      constructingWeakBiMap = undefined;
+
       if (iterable != null) {
+        const set = bind(this.set, this);
         for (const { 0: key, 1: value } of iterable) {
-          this.set(key, value);
+          set(key, value);
         }
       }
+    } else {
+      if (isConstructedInverseWeakBiMap) {
+        throw new Error("Cannot construct WeakBiMap before calling super()");
+      }
+      isConstructedInverseWeakBiMap = true;
+
+      this.inverse = constructingWeakBiMap as WeakBiMap<V, K>;
     }
   }
 
