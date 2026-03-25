@@ -11,5 +11,5 @@ export const createDecodeMap = (encodeSymbols: string) => {
     }
   }
 
-  return Object.freeze(decodeSymbolMap);
+  return decodeSymbolMap;
 };
