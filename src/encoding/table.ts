@@ -1,8 +1,8 @@
-export const createDecodeMap = (encodeSymbols: readonly string[]) => {
+export const createDecodeMap = (encodeSymbols: string) => {
   const decodeSymbolMap = new Uint8Array(0x80).fill(0xff);
 
   for (let i = 0; i < encodeSymbols.length; i++) {
-    const code = encodeSymbols[i]!.charCodeAt(0);
+    const code = encodeSymbols.charCodeAt(i);
     decodeSymbolMap[code] = i;
     // biome-ignore format: is upper alphabet
     if (0x40 < code && code < 0x50) {

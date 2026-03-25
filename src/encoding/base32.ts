@@ -2,25 +2,13 @@ import { createDecodeMap } from "./table.ts";
 
 const BASE32_BIT_LENGTH = 5;
 
-// deno-fmt-ignore
-const base32EncodeSymbols = [
-  "A", "B", "C", "D", "E", "F", "G", "H",
-  "I", "J", "K", "L", "M", "N", "O", "P",
-  "Q", "R", "S", "T", "U", "V", "W", "X",
-  "Y", "Z", "2", "3", "4", "5", "6", "7",
-] as const;
+const base32EncodeSymbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-// deno-fmt-ignore
-const base32hexEncodeSymbols = [
-  "0", "1", "2", "3", "4", "5", "6", "7",
-  "8", "9", "A", "B", "C", "D", "E", "F",
-  "G", "H", "I", "J", "K", "L", "M", "N",
-  "O", "P", "Q", "R", "S", "T", "U", "V",
-] as const;
+const base32hexEncodeSymbols = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
 const BASE32_MASK = 0b11111;
 
-const encode32 = (u8array: Uint8Array, symbols: readonly string[]): string => {
+const encode32 = (u8array: Uint8Array, symbols: string): string => {
   let string = "";
 
   let state = 0;
