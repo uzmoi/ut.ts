@@ -1,5 +1,5 @@
 {
   "useGitignore": true,
   "ignorePaths": [".vscode", "package.json", "deno.json", "deno.lock"],
-  "words": []
+  "words": ["uncurry", "uzmoi"]
 }
