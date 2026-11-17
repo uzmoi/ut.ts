@@ -5,7 +5,7 @@ export const createDecodeMap = (encodeSymbols: string) => {
     const code = encodeSymbols.charCodeAt(i);
     decodeSymbolMap[code] = i;
     // biome-ignore format: is upper alphabet
-    if (0x40 < code && code < 0x50) {
+    if (0x40 < code && code < 0x5b) {
       // to lower alphabet
       decodeSymbolMap[code + 0x20] = i;
     }
