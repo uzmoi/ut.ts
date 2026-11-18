@@ -1,8 +1,13 @@
+const cache: Record<string, Uint8Array> = {};
+
 export const createDecodeMap = (
   symbols: string,
   caseSensitive: boolean,
 ): Uint8Array => {
+  if (cache[symbols]) return cache[symbols]!;
+
   const decodeSymbolMap = new Uint8Array(0x80).fill(0xff);
+  cache[symbols] = decodeSymbolMap;
 
   for (let i = 0; i < symbols.length; i++) {
     const code = symbols.charCodeAt(i);
