@@ -13,7 +13,10 @@ export const encodeBase16 = (u8array: Uint8Array): string => {
   return string;
 };
 
-const decodeSymbolMap = /* #__PURE__ */ createDecodeMap(base16EncodeSymbols);
+const decodeSymbolMap = /* #__PURE__ */ createDecodeMap(
+  base16EncodeSymbols,
+  false,
+);
 
 export const decodeBase16 = (string: string): Uint8Array => {
   if (string.length & 1) {

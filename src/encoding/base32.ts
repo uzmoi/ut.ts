@@ -43,10 +43,12 @@ export const encodeBase32Hex = (u8array: Uint8Array): string => {
 
 const base32DecodeSymbolMap = /* #__PURE__ */ createDecodeMap(
   base32EncodeSymbols,
+  false,
 );
 
 const base32hexDecodeSymbolMap = /* #__PURE__ */ createDecodeMap(
   base32hexEncodeSymbols,
+  false,
 );
 
 const decode32 = (
