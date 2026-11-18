@@ -1,14 +1,13 @@
 import { createDecodeMap } from "./table.ts";
 
 const BASE32_BIT_LENGTH = 5;
-
-const base32EncodeSymbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-
-const base32hexEncodeSymbols = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
-
 const BASE32_MASK = 0b11111;
 
-const encode32 = (u8array: Uint8Array, symbols: string): string => {
+export const BASE32_SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+export const BASE32HEX_SYMBOLS = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
+
+export const encodeBase32 = (u8array: Uint8Array, symbols: string): string => {
   let string = "";
 
   let state = 0;
@@ -33,29 +32,9 @@ const encode32 = (u8array: Uint8Array, symbols: string): string => {
   return string.padEnd(((string.length + 7) >> 3) << 3, "=");
 };
 
-export const encodeBase32 = (u8array: Uint8Array): string => {
-  return encode32(u8array, base32EncodeSymbols);
-};
+export const decodeBase32 = (string: string, symbols: string): Uint8Array => {
+  const decodeMap = createDecodeMap(symbols, false);
 
-export const encodeBase32Hex = (u8array: Uint8Array): string => {
-  return encode32(u8array, base32hexEncodeSymbols);
-};
-
-const base32DecodeSymbolMap = /* #__PURE__ */ createDecodeMap(
-  base32EncodeSymbols,
-  false,
-);
-
-const base32hexDecodeSymbolMap = /* #__PURE__ */ createDecodeMap(
-  base32hexEncodeSymbols,
-  false,
-);
-
-const decode32 = (
-  string: string,
-  symbols: Uint8Array,
-  name: string,
-): Uint8Array => {
   let length = string.length;
 
   if (length & 0b111) {
@@ -73,13 +52,13 @@ const decode32 = (
   let offset = 0;
 
   for (let i = 0; i < length; i++) {
-    const x = symbols[string.charCodeAt(i)]!;
-    if (!(x < 0xff)) {
-      throw new RangeError(`Invalid ${name} symbol: "${string[i]}"`);
+    const u5 = decodeMap[string.charCodeAt(i)]!;
+    if (!(u5 < 0xff)) {
+      throw new SyntaxError(`Invalid symbol: "${string[i]}"`);
     }
 
     offset += BASE32_BIT_LENGTH;
-    state = (state << BASE32_BIT_LENGTH) | x;
+    state = (state << BASE32_BIT_LENGTH) | u5;
 
     if (offset >= 8) {
       offset -= 8;
@@ -88,12 +67,4 @@ const decode32 = (
   }
 
   return u8array;
-};
-
-export const decodeBase32 = (string: string): Uint8Array => {
-  return decode32(string, base32DecodeSymbolMap, "base32");
-};
-
-export const decodeBase32Hex = (string: string): Uint8Array => {
-  return decode32(string, base32hexDecodeSymbolMap, "base32hex");
 };

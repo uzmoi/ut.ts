@@ -6,10 +6,10 @@
 
 export { decodeBase16, encodeBase16 } from "./base16.ts";
 export {
+  BASE32_SYMBOLS,
+  BASE32HEX_SYMBOLS,
   decodeBase32,
-  decodeBase32Hex,
   encodeBase32,
-  encodeBase32Hex,
 } from "./base32.ts";
 export {
   BASE64_SYMBOLS,
