@@ -12,7 +12,11 @@ export const BASE64URL_SYMBOLS =
 export const SORTABLE_BASE64_SYMBOLS =
   "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
 
-export const encodeBase64 = (u8array: Uint8Array, symbols: string): string => {
+export const encodeBase64 = (
+  u8array: Uint8Array,
+  symbols: string,
+  options?: { omitPadding?: boolean },
+): string => {
   let string = "";
 
   let state = 0;
@@ -33,24 +37,32 @@ export const encodeBase64 = (u8array: Uint8Array, symbols: string): string => {
     string += symbols[(state << (BASE64_BIT_LENGTH - offset)) & BASE64_MASK]!;
   }
 
+  if (options?.omitPadding) return string;
+
   // padding
   const r = string.length & 0b11;
   return r === 2 ? `${string}==` : r === 3 ? `${string}=` : string;
 };
 
-export const decodeBase64 = (string: string, symbols: string): Uint8Array => {
+export const decodeBase64 = (
+  string: string,
+  symbols: string,
+  options?: { noPadding?: boolean },
+): Uint8Array => {
   const decodeMap = createDecodeMap(symbols, true);
 
   let length = string.length;
 
-  if (length & 0b11) {
-    throw new Error("Length must be multiple of 4");
-  }
+  if (!options?.noPadding) {
+    if (length & 0b11) {
+      throw new Error("Length must be multiple of 4");
+    }
 
-  // strip padding
-  if (string[length - 1] === "=") {
-    length--;
-    if (string[length - 1] === "=") length--;
+    // strip padding
+    if (string[length - 1] === "=") {
+      length--;
+      if (string[length - 1] === "=") length--;
+    }
   }
 
   const u8array = new Uint8Array(length * (BASE64_BIT_LENGTH / 8));

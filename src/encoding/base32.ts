@@ -7,7 +7,11 @@ export const BASE32_SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
 export const BASE32HEX_SYMBOLS = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
-export const encodeBase32 = (u8array: Uint8Array, symbols: string): string => {
+export const encodeBase32 = (
+  u8array: Uint8Array,
+  symbols: string,
+  options?: { omitPadding?: boolean },
+): string => {
   let string = "";
 
   let state = 0;
@@ -28,21 +32,29 @@ export const encodeBase32 = (u8array: Uint8Array, symbols: string): string => {
     string += symbols[(state << (BASE32_BIT_LENGTH - offset)) & BASE32_MASK];
   }
 
+  if (options?.omitPadding) return string;
+
   // padding 8
   return string.padEnd(((string.length + 7) >> 3) << 3, "=");
 };
 
-export const decodeBase32 = (string: string, symbols: string): Uint8Array => {
+export const decodeBase32 = (
+  string: string,
+  symbols: string,
+  options?: { noPadding?: boolean },
+): Uint8Array => {
   const decodeMap = createDecodeMap(symbols, false);
 
   let length = string.length;
 
-  if (length & 0b111) {
-    throw new Error("Length must be multiple of 8");
-  }
+  if (!options?.noPadding) {
+    if (length & 0b111) {
+      throw new Error("Length must be multiple of 8");
+    }
 
-  // strip padding
-  while (string[length - 1] === "=") length--;
+    // strip padding
+    while (string[length - 1] === "=") length--;
+  }
 
   const u8array = new Uint8Array(length * (BASE32_BIT_LENGTH / 8));
 
