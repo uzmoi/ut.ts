@@ -1,4 +1,5 @@
 import { createDecodeMap } from "./table.ts";
+import type { Length32 } from "./types.ts";
 
 const BASE32_BIT_LENGTH = 5;
 const BASE32_MASK = 0b11111;
@@ -7,9 +8,9 @@ export const BASE32_SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
 export const BASE32HEX_SYMBOLS = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
-export const encodeBase32 = (
+export const encodeBase32 = <T extends string>(
   u8array: Uint8Array,
-  symbols: string,
+  symbols: Length32<T>,
   options?: { omitPadding?: boolean },
 ): string => {
   let string = "";
@@ -38,9 +39,9 @@ export const encodeBase32 = (
   return string.padEnd(((string.length + 7) >> 3) << 3, "=");
 };
 
-export const decodeBase32 = (
+export const decodeBase32 = <T extends string>(
   string: string,
-  symbols: string,
+  symbols: Length32<T>,
   options?: { noPadding?: boolean },
 ): Uint8Array => {
   const decodeMap = createDecodeMap(symbols, false);

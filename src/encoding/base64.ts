@@ -1,4 +1,5 @@
 import { createDecodeMap } from "./table.ts";
+import type { Length64 } from "./types.ts";
 
 const BASE64_BIT_LENGTH = 6;
 const BASE64_MASK = 0b111111;
@@ -12,9 +13,9 @@ export const BASE64URL_SYMBOLS =
 export const SORTABLE_BASE64_SYMBOLS =
   "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
 
-export const encodeBase64 = (
+export const encodeBase64 = <T extends string>(
   u8array: Uint8Array,
-  symbols: string,
+  symbols: Length64<T>,
   options?: { omitPadding?: boolean },
 ): string => {
   let string = "";
@@ -44,9 +45,9 @@ export const encodeBase64 = (
   return r === 2 ? `${string}==` : r === 3 ? `${string}=` : string;
 };
 
-export const decodeBase64 = (
+export const decodeBase64 = <T extends string>(
   string: string,
-  symbols: string,
+  symbols: Length64<T>,
   options?: { noPadding?: boolean },
 ): Uint8Array => {
   const decodeMap = createDecodeMap(symbols, true);
